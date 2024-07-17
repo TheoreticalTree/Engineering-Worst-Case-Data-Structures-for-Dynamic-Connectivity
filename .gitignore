@@ -1,0 +1,9 @@
+build/
+cmake-build-debug/
+cmake-build-debug-coverage/
+cmake-build-release/
+benchmark/builds/
+benchmark/instances/
+benchmark/instances_raw/
+benchmark/aux/
+benchmark/output/

@@ -1,0 +1,287 @@
+builds:
+  - name: dga
+    git: git@gitlab.informatik.uni-bonn.de:coan/thesis/mkaibel.git
+    recursive-clone: true
+    configure:
+      - args:
+          - 'cmake'
+          - '-DCMAKE_INSTALL_PREFIX=@THIS_PREFIX_DIR@'
+          - '-DCMAKE_BUILD_TYPE=Release'
+          - '@THIS_SOURCE_DIR@'
+    compile:
+      - args:
+          - 'make'
+          - 'benchmark'
+          - '-j'
+    install:
+      # TODO: This is a bit hacky, we might want to move to a real installation in the future
+       - args:
+           - 'make'
+           - 'benchmark'
+       - args:
+          - 'mkdir'
+          - '-p'
+          - '@THIS_PREFIX_DIR@/bin'
+       - args:
+          - 'cp'
+          - '@THIS_COMPILE_DIR@/benchmark'
+          - '@THIS_PREFIX_DIR@/bin/benchmark'
+
+revisions:
+  - name: 'main'
+    build_version:
+      'dga': 'main'
+
+instdir: "instances"
+instances:
+  - repo: local
+    set: [ test ]
+    items:
+      - test.txt
+  - repo: local
+    set: [ chenBlank ]
+    items:
+      - dnc_0.inst
+      - call_0.inst
+      - messages_0.inst
+      - fb_0.inst
+      - wiki_0.inst
+      - tech_0.inst
+      - enron_0.inst
+#      - youtube_0.inst
+#      - stackoverflow_0.inst
+  - repo: local
+    set: [ chenQuery ]
+    items:
+      - dnc_bq.inst
+      - call_bq.inst
+      - messages_bq.inst
+      - fb_bq.inst
+      - wiki_bq.inst
+      - tech_bq.inst
+      - enron_bq.inst
+#      - youtube_bq.inst
+#      - stackoverflow_bq.inst
+  - repo: local
+    set: [ cliqueSmall ]
+    items:
+      - cliques_small_1000_100_42.inst
+#      - cliques_small_1000_100_666.inst
+      - cliques_small_10000_100_42.inst
+#      - cliques_small_10000_100_666.inst
+      - cliques_small_100000_100_42.inst
+#      - cliques_small_100000_100_666.inst
+  - repo: local
+    set: [ cliqueSmallQuery ]
+    items:
+      - cliques_small_1000_100_42_bq.inst
+#      - cliques_small_1000_100_666_bq.inst
+      - cliques_small_10000_100_42_bq.inst
+#      - cliques_small_10000_100_666_bq.inst
+      - cliques_small_100000_100_42_bq.inst
+#      - cliques_small_100000_100_666_bq.inst
+  - repo: local
+    set: [ cliqueLarge ]
+    items:
+      - cliques_large_1000_10_42.inst
+#      - cliques_large_1000_10_666.inst
+      - cliques_large_10000_100_42.inst
+#      - cliques_large_10000_100_666.inst
+      - cliques_large_100000_1000_42.inst
+#      - cliques_large_100000_1000_666.inst
+  - repo: local
+    set: [ cliqueLargeQuery ]
+    items:
+      - cliques_large_1000_10_42_bq.inst
+#      - cliques_large_1000_10_666_bq.inst
+      - cliques_large_10000_100_42_bq.inst
+#      - cliques_large_10000_100_666_bq.inst
+      - cliques_large_100000_1000_42_bq.inst
+#      - cliques_large_100000_1000_666_bq.inst
+#  - repo: local
+#    set: [ chenRegular ]
+#    items:
+#      - dnc_0.1.inst
+#      - dnc_1.0.inst
+#      - dnc_10.0.inst
+#      - call_0.1.inst
+#      - call_1.0.inst
+#      - call_10.0.inst
+#      - messages_0.1.inst
+#      - messages_1.0.inst
+#      - messages_10.0.inst
+#      - fb_0.1.inst
+#      - fb_1.0.inst
+#      - fb_10.0.inst
+#      - wiki_0.1.inst
+#      - wiki_1.0.inst
+#      - wiki_10.0.inst
+#      - tech_0.1.inst
+#      - tech_1.0.inst
+#      - tech_10.0.inst
+#      - enron_0.1.inst
+#      - enron_1.0.inst
+#      - enron_10.0.inst
+#      - youtube_0.1.inst
+#      - youtube_1.0.inst
+#      - youtube_10.0.inst
+#      - stackoverflow_0.1.inst
+#      - stackoverflow_1.0.inst
+#      - stackoverflow_10.0.inst
+
+experiments:
+  - name: regularExperimentChen
+    use_builds: [ dga ]
+    args: [ 'benchmark', '@INSTANCE@', '@OUTPUT@', '@EXTRA_ARGS@', '-m', 'regular' ]
+    stdout: out
+  - name: insertDeleteExperimentChen
+    use_builds: [ dga ]
+    args: [ 'benchmark', '@INSTANCE@', '@OUTPUT@', '@EXTRA_ARGS@', '-m', 'maxTimeUpdate' ]
+    stdout: out
+  - name: accuracyExperiment
+    use_builds: [ dga ]
+    args: [ 'benchmark', '@INSTANCE@', '@OUTPUT@', '@EXTRA_ARGS@', '-m', 'correctnessCheck' ]
+    stdout: out
+  - name: queryExperiment
+    use_builds: [ dga ]
+    args: [ 'benchmark', '@INSTANCE@', '@OUTPUT@', '@EXTRA_ARGS@', '-m', 'queryTime' ]
+    stdout: out
+
+variants:
+  - axis: 'algo'
+    items:
+      - name: 'DTree'
+        extra_args: ['-a','DTree']
+#      - name: 'GKKT[base]'
+#        extra_args: ['-a','GKKT[base]']
+      - name: 'GKKT[pHeu]'
+        extra_args: [ '-a','GKKT[pHeu]' ]
+      - name: 'GKKT[lvlHeu]'
+        extra_args: [ '-a','GKKT[lvlHeu]' ]
+#      - name: 'Wang[base]'
+#        extra_args: ['-a','Wang[base]']
+      - name: 'Wang[pHeu]'
+        extra_args: [ '-a','Wang[pHeu]' ]
+      - name: 'Wang[lvlHeu]'
+        extra_args: [ '-a','Wang[lvlHeu]' ]
+#      - name: 'Kaibel[base]'
+#        extra_args: ['-a','Kaibel[base]']
+      - name: 'Kaibel[pHeu]'
+        extra_args: [ '-a','Kaibel[pHeu]' ]
+      - name: 'Kaibel[lvlHeu]'
+        extra_args: [ '-a','Kaibel[lvlHeu]' ]
+      - name: 'HDT'
+        extra_args: [ '-a', 'HDT' ]
+#      - name: 'DynConnectedComponents'
+#        extra_args: [ '-a','DynConnectedComponents' ]
+#      - name: 'DynConnectivityOneForestConnect'
+#        extra_args: ['-a','DynConnectivityOneForestConnect']
+  - axis: 'algoFast'
+    items:
+      - name: 'DTreeF'
+        extra_args: [ '-a','DTree' ]
+#      - name: 'GKKT[pHeu]'
+#        extra_args: [ '-a','GKKT[pHeu]' ]
+      - name: 'GKKT[lvlHeu]F'
+        extra_args: [ '-a','GKKT[lvlHeu]' ]
+#      - name: 'Wang[pHeu]'
+#        extra_args: [ '-a','Wang[pHeu]' ]
+      - name: 'Wang[lvlHeu]F'
+        extra_args: [ '-a','Wang[lvlHeu]' ]
+#      - name: 'Kaibel[pHeu]'
+#        extra_args: [ '-a','Kaibel[pHeu]' ]
+      - name: 'Kaibel[lvlHeu]F'
+        extra_args: [ '-a','Kaibel[lvlHeu]' ]
+      - name: 'HDTF'
+        extra_args: [ '-a', 'HDT' ]
+  - axis: 'algoRandoFast'
+    items:
+#      - name: 'GKKT[base]'
+#        extra_args: [ '-a','GKKT[base]' ]
+#      - name: 'GKKT[pHeu]'
+#        extra_args: [ '-a','GKKT[pHeu]' ]
+      - name: 'GKKT[lvlHeu]RF'
+        extra_args: [ '-a','GKKT[lvlHeu]' ]
+#      - name: 'Wang[base]'
+#        extra_args: [ '-a','Wang[base]' ]
+#      - name: 'Wang[pHeu]'
+#        extra_args: [ '-a','Wang[pHeu]' ]
+      - name: 'Wang[lvlHeu]RF'
+        extra_args: [ '-a','Wang[lvlHeu]' ]
+#      - name: 'Kaibel[base]'
+#        extra_args: [ '-a','Kaibel[base]' ]
+#      - name: 'Kaibel[pHeu]'
+#        extra_args: [ '-a','Kaibel[pHeu]' ]
+      - name: 'Kaibel[lvlHeu]RF'
+        extra_args: [ '-a','Kaibel[lvlHeu]' ]
+  - axis: 'number'
+    items:
+      - name: '100'
+        extra_args: ['-n','100']
+      - name: '1000'
+        extra_args: [ '-n','1000' ]
+      - name: '10000'
+        extra_args: [ '-n','10000' ]
+      - name: '100000'
+        extra_args: [ '-n','100000' ]
+  - axis: 'density'
+    items:
+      - name: '4s'
+        extra_args: ['-d','4s']
+      - name: '20s'
+        extra_args: [ '-d','20s' ]
+      - name: '4logn'
+        extra_args: [ '-d','4logn' ]
+      - name: '20logn'
+        extra_args: [ '-d','20logn' ]
+      - name: '4sqrtn'
+        extra_args: [ '-d','4sqrtn' ]
+      - name: '20sqrtn'
+        extra_args: [ '-d','20sqrtn' ]
+  - axis: 'pStart'
+    items:
+      - name: '0.5'
+        extra_args: ['--ps','0.5']
+  - axis: 'queryFrequencyLow'
+    items:
+      - name: '0.01l'
+        extra_args: ['--qf','0.01']
+      - name: '0.1l'
+        extra_args: [ '--qf','0.1' ]
+      - name: '1l'
+        extra_args: [ '--qf','1' ]
+  - axis: 'queryFrequencyHigh'
+    items:
+      - name: '1h'
+        extra_args: ['--qf','1']
+      - name: '10h'
+        extra_args: [ '--qf','10' ]
+      - name: '100h'
+        extra_args: [ '--qf','100' ]
+  - axis: 'seed'
+    items:
+      - name: '1234'
+        extra_args: ['-s','1234']
+  - axis: 'mode'
+    items:
+      - name: 'timeAdd'
+        extra_args: ['-m','timeAdd']
+      - name: 'timeDel'
+        extra_args: ['-m','timeDel']
+      - name: 'normal'
+        extra_args: ['-m','normal']
+
+matrix:
+  include:
+    - experiments: [ regularExperimentChen ]
+      axes: [ algo, seed ]
+      instsets: [ chenBlank, cliqueSmall, cliqueLarge ]
+    - experiments: [ insertDeleteExperimentChen ]
+      axes: [ algo, seed ]
+      instsets: [ chenBlank, cliqueSmall, cliqueLarge ]
+    - experiments: [ accuracyExperiment ]
+      axes: [ algoRandoFast, seed ]
+      instsets: [ chenBlank, cliqueSmall, cliqueLarge ]
+    - experiments: [ queryExperiment ]
+      axes: [ algoFast ]
+      instsets: [ chenQuery, cliqueSmallQuery, cliqueLargeQuery ]

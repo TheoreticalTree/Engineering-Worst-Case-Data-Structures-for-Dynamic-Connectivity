@@ -1,0 +1,10 @@
+# run: conda env create -n GKKT --file conda-env.yml
+channels:
+  - conda-forge
+  - default
+dependencies:
+  - python=3.8
+  - pip
+  - pandas
+  - seaborn
+  - simexpal
