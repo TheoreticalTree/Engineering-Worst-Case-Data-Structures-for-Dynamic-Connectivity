@@ -1,6 +1,6 @@
 builds:
   - name: dga
-    git: git@gitlab.informatik.uni-bonn.de:coan/thesis/mkaibel.git
+    git: git@github.com:TheoreticalTree/ParametricMaxFlow.git
     recursive-clone: true
     configure:
       - args:
